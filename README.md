@@ -14,6 +14,13 @@ bun dev
 
 Open [http://localhost:8000](http://localhost:8000) in your browser to see the result.
 
+In order for this to work locally, you'd need to set your project id like so:
+
+```sh
+$ export API_KEY=<your_railway_graphql_api_key>
+$ export PROJECT_ID=<your_railway_project_id>
+```
+
 # Railway Deployment
 
 TODO
