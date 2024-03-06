@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     try {
         const data = await graphQLClient.request({ document: REDEPLOY, variables: { id: body.id } });
 
-        return NextResponse.json({ data }, { status: 204 });
+        return NextResponse.json({ status: 204 });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });
     }

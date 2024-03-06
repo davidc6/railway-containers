@@ -25,7 +25,7 @@ export const DEPLOYMENTS = gql`
 `;
 
 // environmentId - production
-const REDEPLOY = gql`
+const DEPLOY = gql`
     mutation ServiceInstanceRedeploy($serviceId: String!) {
         serviceInstanceRedeploy(
             environmentId: "42b7c860-b50d-478a-844f-f5fe0d725021"
@@ -34,14 +34,31 @@ const REDEPLOY = gql`
     }
 `;
 
+type NodeType = {
+    node: {
+        id: string,
+        status: string,
+        canRedeploy: boolean
+    }
+}
+
+export type DeploymentsType = {
+    deployments: {
+        edges: NodeType[]
+    }
+    service: {
+        name: string
+    }
+}
+
 // Gets deployments for a service
 export async function GET(req: NextRequest, context: any) {
     const { params } = context;
 
     try {
-        const data: any = await graphQLClient.request({ document: DEPLOYMENTS, variables: { id: params.id } });
+        const data: DeploymentsType = await graphQLClient.request({ document: DEPLOYMENTS, variables: { id: params.id } });
 
-        return NextResponse.json({ data: { deployments: data?.deployments.edges, service: { name: data?.service.name } } });
+        return NextResponse.json({ data });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });
     }
@@ -51,7 +68,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     try {
-        const data = await graphQLClient.request({ document: REDEPLOY, variables: { serviceId: body.id } });
+        const data = await graphQLClient.request({ document: DEPLOY, variables: { serviceId: body.id } });
 
         return NextResponse.json({ data }, { status: 204 });
     } catch (e: any) {

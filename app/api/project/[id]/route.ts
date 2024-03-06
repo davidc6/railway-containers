@@ -31,10 +31,12 @@ export type Edge = {
     id: string,
     name: string
     projectId: string
+    status: string
     deployments: {
       edges: [{
         node: {
           status: string
+          name: string
         }
       }]
     }
