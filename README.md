@@ -30,8 +30,11 @@ TODO
 - Remove remaining TypeScript `any`s
 - Add tests
 - Add caching of results with occasional refetch with something like Apollo Client or ReactQuery (I had some issues with Apollo Client caching and didn't want to take too long to figure out the issue before submitting the solution)
-- Better loader
+- Following up on the previous point, it would be much more beneficial to use Subscriptions instead of polling the endpoint to listen for any updates from the server
+- Better loader (we can use Nextjs native loader functionality)
 - Enable cold / initial start of containers
 - Make it responsive
 - Add loaders instead of a simple "Loading..." text
 - Improve status return error status codes (be more intentional and informative about the statuses that we return)
+- API security of course is not the best at the moment and can be improved
+- page.tsx can be broken down into smaller components
