@@ -1,3 +1,3 @@
 export type JSONResponse<T> = {
-    data?: T
+    data: T
 }

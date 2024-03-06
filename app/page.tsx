@@ -45,9 +45,10 @@ export default function Home() {
                     key={data.node.id}
                   >
                     <h2 className="mb-3 text-2xl font-semibold">
+                      {data?.node?.name}
                     </h2>
                     <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                      Deployed: {data.node.deployments.edges[0].node.status ? "Yes" : "No"}
+                      Deployed: {data?.node?.deployments?.edges[0]?.node.status ? "Yes" : "No"}
                     </p>
                   </Link>
                 )
