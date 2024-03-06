@@ -2,7 +2,7 @@
 
 import { Button, Modal } from 'flowbite-react';
 import { useState } from 'react';
-import { SERVICE_TYPE } from './api/service/route';
+import { SERVICE_TYPE } from './types';
 
 export function ModalOptions({ shouldReload }: { shouldReload: (reload: boolean) => void }) {
     const [openModal, setOpenModal] = useState(false);

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { gql } from 'graphql-request';
 import { graphQLClient } from '../../../../graphql-client';
 
-export const DEPLOYMENTS = gql`
+const DEPLOYMENTS = gql`
     query Deployments($id: String!) {
         deployments (
             input: { 

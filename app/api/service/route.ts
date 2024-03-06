@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { gql } from "graphql-request";
 import { graphQLClient } from "../../graphql-client";
-
-export enum SERVICE_TYPE {
-    NODE = "node",
-    REDIS = "redis"
-}
+import { SERVICE_TYPE } from "@/app/types";
 
 const CREATE_NODEJS_SERVICE = gql`
   mutation MyMutation($id: ID!) {
