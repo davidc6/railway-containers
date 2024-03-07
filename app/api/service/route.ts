@@ -17,7 +17,7 @@ const CREATE_NODEJS_SERVICE = gql`
 `;
 
 const CREATE_REDIS_SERVICE = gql`
-  mutation MyMutation($id: String!) {
+  mutation MyMutation($id: String!, $envId: String!) {
     templateDeploy(
         input: {
             services: {
@@ -29,7 +29,7 @@ const CREATE_REDIS_SERVICE = gql`
                 } 
             }
             projectId: $id
-            environmentId: "42b7c860-b50d-478a-844f-f5fe0d725021",
+            environmentId: $envId,
             templateCode: "redis"
         }
     ) {
@@ -47,7 +47,12 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const data = await graphQLClient.request({ document, variables: { id: process.env.PROJECT_ID, serviceId: "" } });
+        const data = await graphQLClient.request(
+            {
+                document,
+                variables: { id: process.env.PROJECT_ID, serviceId: "", envId: process.env.ENVIRONMENT_ID }
+            }
+        );
         return NextResponse.json({ data }, { status: 202 });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });

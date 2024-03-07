@@ -11,7 +11,12 @@ export function ModalOptions({ shouldReload }: { shouldReload: (reload: boolean)
         try {
             await fetch("/api/service", { method: "POST", body: JSON.stringify({ id: SERVICE_TYPE.REDIS }) });
             setOpenModal(false)
-            shouldReload(true)
+            // TODO: since Subscription is not used yet, 
+            // timeout is the best way to make sure that new service will show up on the services page.
+            // In the future, most likely would need to check new service status (i.e. initialisation).
+            setTimeout(() => {
+                shouldReload(true)
+            }, 3000);
         } catch (e: any) {
             console.log(e.message)
         }
