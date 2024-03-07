@@ -10,8 +10,6 @@ export default function Home() {
   const [data, setData] = useState<Project | null>(null);
   const [reload, setReload] = useState<boolean>(false);
 
-  // TODO: reload the page after service creation
-  // most likely would need to check new service status (i.e. initialisation)
   useEffect(() => {
     async function fetchProject() {
       // Project id here does not really matter at this point
@@ -38,6 +36,11 @@ export default function Home() {
           ? <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left mt-6">
             {
               data.project.services.edges.map((data: Edge) => {
+                // To hide this web app from the list of services
+                if (data.node.id === "ca86ba1b-97c6-4bc2-bcfd-0c9d10f4468c") {
+                  return null
+                }
+
                 return (
                   <Link
                     href={`/service/${data.node.id}`}

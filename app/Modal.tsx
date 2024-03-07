@@ -16,7 +16,7 @@ export function ModalOptions({ shouldReload }: { shouldReload: (reload: boolean)
             // In the future, most likely would need to check new service status (i.e. initialisation).
             setTimeout(() => {
                 shouldReload(true)
-            }, 3000);
+            }, 5000);
         } catch (e: any) {
             console.log(e.message)
         }
