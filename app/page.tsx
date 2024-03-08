@@ -1,10 +1,11 @@
 'use client'
 
 import Link from "next/link";
-import { ModalOptions } from "./Modal";
 import { useEffect, useState } from "react";
-import { Edge, Project } from "./api/project/[id]/route";
-import { JSONResponse } from "./types";
+import { ServiceNode, Project } from "@/app/api/project/[id]/route";
+import { JSONResponse } from "@/app/types";
+import { Header } from "@/components/Header";
+import { Modal } from "@/components/Modal";
 
 export default function Home() {
   const [data, setData] = useState<Project | null>(null);
@@ -28,14 +29,14 @@ export default function Home() {
   return (
     <>
       <div className="flex">
-        <h1 className="text-3xl font-bold mr-2">Services</h1>
-        <ModalOptions shouldReload={setReload} />
+        <Header heading="Services" />
+        <Modal shouldReload={setReload} />
       </div>
       {
         data
           ? <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left mt-6">
             {
-              data.project.services.edges.map((data: Edge) => {
+              data.project.services.edges.map((data: ServiceNode) => {
                 // To hide this web app from the list of services
                 if (data.node.id === "ca86ba1b-97c6-4bc2-bcfd-0c9d10f4468c") {
                   return null

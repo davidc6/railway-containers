@@ -26,29 +26,33 @@ const GET_PROJECT = gql`
   }
 `;
 
-export type Edge = {
+export type DeploymentNode = {
+  node: {
+    id: string,
+    status: string,
+    name: string
+    canRedeploy: boolean
+  }
+}
+
+export type ServiceNode = {
   node: {
     id: string,
     name: string
     projectId: string
     status: string
     deployments: {
-      edges: [{
-        node: {
-          status: string
-          name: string
-        }
-      }]
+      edges: DeploymentNode[]
     }
   }
-};
+}
 
 export type Project = {
   project: {
     id: string,
     name: string,
     services: {
-      edges: Edge[]
+      edges: ServiceNode[]
     }
   }
 }

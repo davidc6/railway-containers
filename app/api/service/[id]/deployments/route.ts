@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { gql } from 'graphql-request';
-import { graphQLClient } from '../../../../graphql-client';
+import { graphQLClient } from '@/app/graphql-client';
+import { DeploymentNode } from "@/app/api/project/[id]/route";
 
 const DEPLOYMENTS = gql`
     query Deployments($id: String!) {
@@ -24,7 +25,6 @@ const DEPLOYMENTS = gql`
     }
 `;
 
-// environmentId - production
 const DEPLOY = gql`
     mutation ServiceInstanceRedeploy($serviceId: String!, $envId: String!) {
         serviceInstanceRedeploy(
@@ -44,7 +44,7 @@ type NodeType = {
 
 export type DeploymentsType = {
     deployments: {
-        edges: NodeType[]
+        edges: DeploymentNode[]
     }
     service: {
         name: string
