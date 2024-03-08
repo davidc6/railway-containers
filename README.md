@@ -22,6 +22,8 @@ $ export PROJECT_ID=<your_railway_project_id>
 $ export ENVIRONMENT_ID=<environment_id>
 ```
 
+To run locally create `.env.local` file and add the above env variables to it.
+
 # Railway Deployment
 
 The app is deployed and available on this url - [https://railway-containers-production.up.railway.app/](https://railway-containers-production.up.railway.app/).
