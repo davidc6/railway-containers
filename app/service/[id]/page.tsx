@@ -91,29 +91,46 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    if (isLoading) {
-        return <p>Loading ... </p>
+    const ServicesHeader = () => {
+        return (
+            <>
+                <Header heading={serviceDeployments?.service?.name ?? ''} />
+                <div className='mt-8'>
+                    <Link href={`/service/${params.id}`} className='underline underline-offset-8'>Deployments</Link>
+                </div>
+            </>
+        )
     }
 
-    return <>
-        <HomeLink />
-        <Header heading={serviceDeployments?.service?.name ?? ''} />
-        <div className='mt-8'>
-            <Link href={`/service/${params.id}`} className='underline underline-offset-8'>Deployments</Link>
-        </div>
-        {
-            serviceDeployments && serviceDeployments?.deployments?.edges.length
-                ? <ListItemContext.Provider
-                    value={{ listItemBeingProcessed: rowBeingProcessed, setListItemBeingProcessed: setRowBeingProcessed }}
-                >
-                    <DeploymentsList serviceId={params.id} serviceDeployments={serviceDeployments.deployments.edges} />
-                </ListItemContext.Provider>
-                : <div>
-                    <p className='mt-6'>No deployments yet</p>
-                    <button className={BUTTON_CLASSES} onClick={deploymentHandler}>
-                        Deploy
-                    </button>
-                </div>
-        }
-    </>
+    const Deployments = () => {
+        return serviceDeployments && serviceDeployments?.deployments?.edges.length
+            ? <ListItemContext.Provider
+                value={{ listItemBeingProcessed: rowBeingProcessed, setListItemBeingProcessed: setRowBeingProcessed }}
+            >
+                <DeploymentsList serviceId={params.id} serviceDeployments={serviceDeployments?.deployments.edges} />
+            </ListItemContext.Provider>
+            : <Deploy />
+    }
+
+    const Deploy = () => {
+        return (
+            <div>
+                <p className='mt-6'>No deployments yet</p>
+                <button className={BUTTON_CLASSES} onClick={deploymentHandler}>
+                    Deploy
+                </button>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <HomeLink />
+            {
+                !isLoading
+                    ? <><ServicesHeader /><Deployments /></>
+                    : <p>Loading ...</p>
+            }
+        </>
+    )
 }
