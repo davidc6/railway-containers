@@ -18,7 +18,7 @@ const GET_SERVICE = gql`
     }
 `;
 
-export async function GET(req: NextRequest, context: any) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
     const { params } = context;
     try {
         const data = await graphQLClient.request({ document: GET_SERVICE, variables: { serviceId: params.id } });

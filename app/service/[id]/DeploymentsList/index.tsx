@@ -1,7 +1,15 @@
 import { DeploymentNode } from "@/app/api/project/[id]/route"
-import { MouseEvent, useContext } from "react"
+import { Dispatch, MouseEvent, SetStateAction, useContext } from "react"
 import { DeploymentsListItem } from "../DeploymentsListItem "
-import { ListItemContext } from "@/app/service/[id]/page"
+import { createContext } from "react"
+
+
+type ListItemContextType = {
+    listItemBeingProcessed: boolean,
+    setListItemBeingProcessed: Dispatch<SetStateAction<boolean>>
+}
+
+export const ListItemContext = createContext<ListItemContextType>(undefined!)
 
 export enum DEPLOYMENT_STATUS {
     SUCCESS = "SUCCESS",
@@ -31,7 +39,7 @@ export const DEPLOYMENT = {
 
 const POLLING_INTERVAL = 5000;
 
-export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: string, serviceDeployments: any }) => {
+export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: string, serviceDeployments: DeploymentNode[] }) => {
     const { listItemBeingProcessed, setListItemBeingProcessed } = useContext(ListItemContext)
 
     const removeDeploymentHandler = async (e: MouseEvent<HTMLButtonElement>) => {

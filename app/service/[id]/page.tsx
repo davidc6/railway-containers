@@ -1,23 +1,16 @@
 'use client'
 
-import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { DeploymentsType } from '@/app/api/service/[id]/deployments/route';
 import { JSONResponse } from '@/app/types';
 import { HomeLink } from '@/app/service/[id]/HomeLink';
 import { Header } from '@/components/Header';
-import { DEPLOYMENT_STATUS, DeploymentsList } from '@/app/service/[id]/DeploymentsList';
+import { DEPLOYMENT_STATUS, DeploymentsList, ListItemContext } from '@/app/service/[id]/DeploymentsList';
 import { DeploymentNode } from '@/app/api/project/[id]/route';
+import { BUTTON_CLASSES } from './DeploymentsListItem ';
 
-export const BUTTON_CLASSES = 'bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-2 border border-gray-400 rounded shadow w-24'
 const POLLING_INTERVAL = 5000;
-
-type ListItemContextType = {
-    listItemBeingProcessed: boolean,
-    setListItemBeingProcessed: Dispatch<SetStateAction<boolean>>
-}
-
-export const ListItemContext = createContext<ListItemContextType>(undefined!)
 
 export default function Page({ params }: { params: { id: string } }) {
     const [serviceDeployments, setServiceDeployments] = useState<DeploymentsType | null>(null)

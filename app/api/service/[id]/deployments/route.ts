@@ -52,7 +52,7 @@ export type DeploymentsType = {
 }
 
 // Gets deployments for a service
-export async function GET(req: NextRequest, context: any) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
     const { params } = context;
 
     try {
