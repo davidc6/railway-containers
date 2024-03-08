@@ -42,6 +42,7 @@ Given the time constrains, I decided not to take any longer to make the applicat
 - Following up on the previous point, it would be much more beneficial to use Subscriptions instead of polling the endpoint to listen for any updates from the server
 - Better loader (we can use Nextjs native loader functionality)
 - Add better loaders instead of a simple "Loading..." text
+- Account for "FAILED" deployment status (currently only SUCCESS, REMOVED and INITIALISING are accounted for)
 - Improve status return error status codes (be more intentional and informative about the statuses)
 - API security of course is not the best at the moment and can be improved
 - Error handling at the moment is just a simple `console.log` this can be further improved
