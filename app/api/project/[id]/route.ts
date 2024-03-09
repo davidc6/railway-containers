@@ -1,4 +1,3 @@
-
 import { gql } from "graphql-request";
 import { NextRequest, NextResponse } from "next/server";
 import { graphQLClient } from "../../../graphql-client";
@@ -57,13 +56,11 @@ export type Project = {
   }
 }
 
-// Gets a project and its services
-export async function GET(req: NextRequest, context: { id: string }) {
-  // NOTE: we could use this in the future if we choose to support more than one project
-  const { id } = context;
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
 
   try {
-    const data: Project = await graphQLClient.request({ document: GET_PROJECT, variables: { id: process.env.PROJECT_ID } });
+    const data: Project = await graphQLClient.request({ document: GET_PROJECT, variables: { id: params.id } });
 
     return NextResponse.json({ data });
   } catch (e: any) {

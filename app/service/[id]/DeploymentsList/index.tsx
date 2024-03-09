@@ -3,7 +3,6 @@ import { Dispatch, MouseEvent, SetStateAction, useContext } from "react"
 import { DeploymentsListItem } from "../DeploymentsListItem "
 import { createContext } from "react"
 
-
 type ListItemContextType = {
     listItemBeingProcessed: boolean,
     setListItemBeingProcessed: Dispatch<SetStateAction<boolean>>
@@ -39,7 +38,7 @@ export const DEPLOYMENT = {
 
 const POLLING_INTERVAL = 5000;
 
-export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: string, serviceDeployments: DeploymentNode[] }) => {
+export const DeploymentsList = ({ serviceDeployments }: { serviceDeployments: DeploymentNode[] }) => {
     const { listItemBeingProcessed, setListItemBeingProcessed } = useContext(ListItemContext)
 
     const removeDeploymentHandler = async (e: MouseEvent<HTMLButtonElement>) => {
