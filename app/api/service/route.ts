@@ -4,7 +4,7 @@ import { graphQLClient } from "../../graphql-client";
 import { SERVICE_TYPE } from "@/app/types";
 
 const CREATE_NODEJS_SERVICE = gql`
-  mutation MyMutation($id: ID!) {
+  mutation createNodeJsService($id: ID!) {
     templateDeploy(
         input: {
             services: { serviceName: "hello-world", template: "Node.js" }
@@ -17,7 +17,7 @@ const CREATE_NODEJS_SERVICE = gql`
 `;
 
 const CREATE_REDIS_SERVICE = gql`
-  mutation MyMutation($id: String!, $envId: String!) {
+  mutation createRedisService($id: String!, $envId: String!) {
     templateDeploy(
         input: {
             services: {
@@ -34,9 +34,15 @@ const CREATE_REDIS_SERVICE = gql`
         }
     ) {
         projectId
+        workflowId
     }
   }
 `;
+
+type TEMPLATE_DEPLOY = {
+    projectId: string,
+    workflowId: string
+}
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -47,12 +53,13 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const data = await graphQLClient.request(
+        const data: TEMPLATE_DEPLOY = await graphQLClient.request(
             {
                 document,
                 variables: { id: process.env.PROJECT_ID, serviceId: "", envId: process.env.ENVIRONMENT_ID }
             }
         );
+
         return NextResponse.json({ data }, { status: 202 });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });

@@ -100,7 +100,7 @@ export default function Page({ params }: { params: { id: string } }) {
             ? <ListItemContext.Provider
                 value={{ listItemBeingProcessed: rowBeingProcessed, setListItemBeingProcessed: setRowBeingProcessed }}
             >
-                <DeploymentsList serviceId={params.id} serviceDeployments={serviceDeployments?.deployments.edges} />
+                <DeploymentsList serviceDeployments={serviceDeployments?.deployments.edges} />
             </ListItemContext.Provider>
             : <Deploy />
     }
