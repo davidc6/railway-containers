@@ -6,7 +6,7 @@ import { ServiceNode } from "@/app/api/project/[id]/route"
 import { Modal } from "@/components/Modal"
 
 export const ServicesList = ({ services }: { services: ServiceNode[] }) => {
-    const [optimisticServices, addOptimisticService] = useOptimistic<ServiceNode[], ServiceNode>(
+    const [optimisticServices, addOptimisticService] = useOptimistic(
         services,
         (currentState: ServiceNode[], optimisticVal: ServiceNode) => [
             ...currentState,
@@ -36,6 +36,6 @@ export const ServicesList = ({ services }: { services: ServiceNode[] }) => {
                 </Link>
             )
         })}
-        <Modal add={addOptimisticService} />
+        <Modal addService={addOptimisticService} />
     </>
 }
