@@ -1,66 +1,21 @@
-'use client'
-
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ServiceNode, Project } from "@/app/api/project/[id]/route";
+import { Project } from "@/app/api/project/[id]/route";
 import { JSONResponse } from "@/app/types";
 import { Header } from "@/components/Header";
-import { Modal } from "@/components/Modal";
+import { ServicesList } from "@/components/ServicesList";
 
-export default function Home() {
-  const [data, setData] = useState<Project | null>(null);
-  const [reload, setReload] = useState<boolean>(false);
+export default async function Home() {
+    let url = `${process.env.BASE_URL}/api/project/${process.env.PROJECT_ID}`
+    let response = await fetch(url)
+    const { data }: JSONResponse<Project> = await response.json()
 
-  useEffect(() => {
-    async function fetchProject() {
-      // Project id here does not really matter at this point
-      // since project id is currently read from the environment
-      let response = await fetch("/api/project/1")
-      const { data }: JSONResponse<Project> = await response.json();
-
-      if (data) {
-        setData(data)
-      }
-    }
-
-    fetchProject()
-  }, [reload]);
-
-  return (
-    <>
-      <div className="flex">
-        <Header heading="Services" />
-        <Modal shouldReload={setReload} />
-      </div>
-      {
-        data
-          ? <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left mt-6">
-            {
-              data.project.services.edges.map((data: ServiceNode) => {
-                // To hide this web app from the list of services
-                if (data.node.id === "ca86ba1b-97c6-4bc2-bcfd-0c9d10f4468c") {
-                  return null
-                }
-
-                return (
-                  <Link
-                    href={`/service/${data.node.id}`}
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    key={data.node.id}
-                  >
-                    <h2 className="mb-3 text-2xl font-semibold">
-                      {data?.node?.name}
-                    </h2>
-                    <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                      Deployed: {data?.node?.deployments?.edges[0]?.node.status ? "Yes" : "No"}
-                    </p>
-                  </Link>
-                )
-              })
-            }
-          </div >
-          : <p>Loading ...</p>
-      }
-    </>
-  );
+    return (
+        <>
+            <div className="flex">
+                <Header heading="Services" />
+            </div>
+            <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left mt-6">
+                <ServicesList services={data?.project.services.edges} />
+            </div >
+        </>
+    )
 }

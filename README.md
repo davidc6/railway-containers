@@ -48,3 +48,7 @@ Given the time constrains, I decided not to take any longer to make the applicat
 - Improve status return error status codes (be more intentional and informative about the statuses)
 - API security of course is not the best at the moment and can be improved
 - Error handling at the moment is just a simple `console.log` this can be further improved
+
+## Fix
+
+- Deployment status on the services page
