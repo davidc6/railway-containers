@@ -34,14 +34,6 @@ const DEPLOY = gql`
     }
 `;
 
-type NodeType = {
-    node: {
-        id: string,
-        status: string,
-        canRedeploy: boolean
-    }
-}
-
 export type DeploymentsType = {
     deployments: {
         edges: DeploymentNode[]
@@ -57,7 +49,6 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
 
     try {
         const data: DeploymentsType = await graphQLClient.request({ document: DEPLOYMENTS, variables: { id: params.id } });
-
         return NextResponse.json({ data });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });

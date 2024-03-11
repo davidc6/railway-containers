@@ -4,6 +4,7 @@ import { useOptimistic } from "react"
 import Link from "next/link"
 import { ServiceNode } from "@/app/api/project/[id]/route"
 import { Modal } from "@/components/Modal"
+import { DEPLOYMENT_STATUS } from "@/app/types"
 
 export const ServicesList = ({ services }: { services: ServiceNode[] }) => {
     const [optimisticServices, addOptimisticService] = useOptimistic(
@@ -13,6 +14,17 @@ export const ServicesList = ({ services }: { services: ServiceNode[] }) => {
             optimisticVal
         ]
     )
+
+    const deploymentStatus = (service: ServiceNode) => {
+        const currentStatus = service?.node?.deployments?.edges[0]?.node?.status
+
+        if (!currentStatus || currentStatus !== DEPLOYMENT_STATUS.SUCCESS) {
+            return "No"
+        }
+
+        return "Yes"
+    }
+
 
     return <>
         {optimisticServices?.map((data: ServiceNode) => {
@@ -31,7 +43,7 @@ export const ServicesList = ({ services }: { services: ServiceNode[] }) => {
                         {data?.node?.name}
                     </h2>
                     <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                        Deployed: {data?.node?.deployments?.edges[0]?.node.status ? "Yes" : "No"}
+                        Deployed: {deploymentStatus(data)}
                     </p>
                 </Link>
             )
