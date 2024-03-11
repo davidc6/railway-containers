@@ -78,7 +78,7 @@ export async function triggerRedeployment(deploymentId: string, serviceId: strin
     const service = await pollDeploymentStatus(serviceId)
 
     revalidatePath("/")
-    revalidatePath("/service/[id]", "layout")
+    revalidatePath("/service/[id]", "page")
 
     return { service }
 }
@@ -93,7 +93,7 @@ export async function triggerContainerShutdown(deploymentId: string, serviceId: 
     const service = await pollDeploymentStatus(serviceId)
 
     revalidatePath("/")
-    revalidatePath("/service/[id]", "layout")
+    revalidatePath("/service/[id]", "page")
 
     return { service }
 }
