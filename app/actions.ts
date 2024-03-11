@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import { SERVICE_TYPE } from "./types";
+import { JSONResponse, SERVICE_TYPE } from "./types";
 
 async function pollWorkflowStatus(data: any) {
     return new Promise((res, rej) => {
@@ -20,10 +20,10 @@ async function pollWorkflowStatus(data: any) {
 }
 
 export async function createService() {
-    const response: any = await fetch(`${process.env.BASE_URL}/api/service`,
+    const response = await fetch(`${process.env.BASE_URL}/api/service`,
         { method: "POST", body: JSON.stringify({ id: SERVICE_TYPE.REDIS }) }
     )
-    const { data } = await response.json()
+    const { data }: JSONResponse<{ templateDeploy: { workflowId: string } }> = await response.json()
 
     const url = `${process.env.BASE_URL}/api/workflows`
     const workflowsResponse = await fetch(url,
@@ -38,4 +38,28 @@ export async function createService() {
     revalidatePath("/")
 
     return { message: "Deployment complete" }
+}
+
+export async function triggerRedeployment(deploymentId: string) {
+    const response = await fetch(`${process.env.BASE_URL}/api/deployment`,
+        { method: "POST", body: JSON.stringify({ id: deploymentId }) }
+    )
+    const { data } = await response.json()
+
+    revalidatePath("/service/[id]", "page")
+    revalidatePath("/")
+
+    return { message: "Triggered redeployment" }
+}
+
+export async function triggerContainerShutdown(deploymentId: string) {
+    const response = await fetch(`${process.env.BASE_URL}/api/deployment/${deploymentId}`,
+        { method: "DELETE" }
+    )
+    const { data } = await response.json()
+
+    revalidatePath("/service/[id]", "page")
+    revalidatePath("/")
+
+    return { message: "Triggered redeployment" }
 }
