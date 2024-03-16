@@ -1,8 +1,10 @@
-import { DeploymentNode } from "@/app/api/project/[id]/route"
-import { Dispatch, MouseEvent, SetStateAction, useContext } from "react"
-import { DeploymentsListItem } from "../DeploymentsListItem "
-import { createContext } from "react"
+'use client'
 
+import { DeploymentNode } from "@/app/api/project/[id]/route"
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from "react"
+import { BUTTON_CLASSES, DeploymentsListItem } from "../DeploymentsListItem "
+import { createContext } from "react"
+import { triggerContainerShutdown, triggerRedeployment } from "@/app/actions"
 
 type ListItemContextType = {
     listItemBeingProcessed: boolean,
@@ -11,44 +13,33 @@ type ListItemContextType = {
 
 export const ListItemContext = createContext<ListItemContextType>(undefined!)
 
-export enum DEPLOYMENT_STATUS {
-    SUCCESS = "SUCCESS",
-    REMOVED = "REMOVED",
-    CRASHED = "CRASHED",
-    INITIALISING = "INITIALISING",
-    DEPLOYING = "DEPLOYING"
-}
+export const DeploymentsList = ({ initialDeployments, serviceId }: { initialDeployments: DeploymentNode[], serviceId: string }) => {
+    const [deployments, setDeployments] = useState<DeploymentNode[]>(initialDeployments)
+    const [deploymentProcessing, setDeploymentProcessing] = useState<boolean>(false)
 
-export const DEPLOYMENT = {
-    [DEPLOYMENT_STATUS.SUCCESS]: {
-        label: "Deployed"
-    },
-    [DEPLOYMENT_STATUS.REMOVED]: {
-        label: "Not deployed"
-    },
-    [DEPLOYMENT_STATUS.CRASHED]: {
-        label: "Crashed"
-    },
-    [DEPLOYMENT_STATUS.INITIALISING]: {
-        label: "Working"
-    },
-    [DEPLOYMENT_STATUS.DEPLOYING]: {
-        label: "Working"
+    const pseudoNode = (): DeploymentNode => {
+        return { node: { id: 'Processing', name: '', status: '', canRedeploy: true } }
     }
-}
 
-const POLLING_INTERVAL = 5000;
-
-export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: string, serviceDeployments: DeploymentNode[] }) => {
-    const { listItemBeingProcessed, setListItemBeingProcessed } = useContext(ListItemContext)
+    // To improve user experience and communicate action to the users
+    const processDeploymentAction = () => {
+        if (deployments && deployments.length) {
+            setDeployments([pseudoNode(), ...deployments])
+        }
+    }
 
     const removeDeploymentHandler = async (e: MouseEvent<HTMLButtonElement>) => {
         // TODO: a pop-up to confirm (i.e. "Are you sure you want to delete?")
-        const id = (e.target as HTMLInputElement).getAttribute('data-id');
+        const id = (e.target as HTMLInputElement).getAttribute('data-id') as string;
 
         try {
-            setListItemBeingProcessed(true)
-            await fetch(`/api/deployment/${id}`, { method: "DELETE" })
+            setDeploymentProcessing(true)
+            processDeploymentAction()
+
+            const { service }: any = await triggerContainerShutdown(id, serviceId)
+
+            setDeploymentProcessing(false)
+            setDeployments(service?.data?.deployments?.edges)
         } catch (e: any) {
             console.log(e)
         }
@@ -56,11 +47,25 @@ export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: 
 
     const redeployDeploymentHandler = async (e: MouseEvent<HTMLButtonElement>) => {
         // TODO: a pop-up to confirm redeployment
-        const id = (e.target as HTMLInputElement).getAttribute("data-id");
+        const id = (e.target as HTMLInputElement).getAttribute("data-id") as string;
 
         try {
-            setListItemBeingProcessed(true)
-            await fetch(`/api/deployment`, { method: "POST", body: JSON.stringify({ id }) })
+            setDeploymentProcessing(true)
+            processDeploymentAction()
+
+            const { service }: any = await triggerRedeployment(id, serviceId)
+
+            setDeploymentProcessing(false)
+            setDeployments(service?.data?.deployments?.edges)
+        } catch (e: any) {
+            console.log(e)
+        }
+    }
+
+    const deploymentHandler = async () => {
+        try {
+            processDeploymentAction()
+            await fetch(`/api/service/${serviceId}/deployments`, { method: "POST", body: JSON.stringify({ id: serviceId }) })
         } catch (e: any) {
             console.log(e)
         }
@@ -69,18 +74,25 @@ export const DeploymentsList = ({ serviceId, serviceDeployments }: { serviceId: 
     return (
         <ul className='divide-y divide-gray-200 dark:divide-gray-700 mt-6'>
             {
-                serviceDeployments.map((node: DeploymentNode, index: number) => {
-                    return (
-                        <DeploymentsListItem
-                            key={node.node.id}
-                            index={index}
-                            node={node}
-                            isBeingProcessed={listItemBeingProcessed}
-                            removeDeploymentHandler={removeDeploymentHandler}
-                            redeployDeploymentHandler={redeployDeploymentHandler}
-                        />
-                    )
-                })
+                deployments && deployments.length
+                    ? deployments.map((node: DeploymentNode, index: number) => {
+                        return (
+                            <DeploymentsListItem
+                                key={node.node.id}
+                                index={index}
+                                node={node}
+                                isBeingProcessed={deploymentProcessing}
+                                removeDeploymentHandler={removeDeploymentHandler}
+                                redeployDeploymentHandler={redeployDeploymentHandler}
+                            />
+                        )
+                    })
+                    : <div>
+                        <p className='mt-6'>No deployments yet</p>
+                        <button className={BUTTON_CLASSES} onClick={deploymentHandler}>
+                            Deploy
+                        </button>
+                    </div>
             }
         </ul>
     )

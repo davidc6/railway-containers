@@ -1,41 +1,37 @@
-
 'use client';
 
-import { Button, Modal as FlowBiteModal } from 'flowbite-react';
+import { Modal as FlowBiteModal } from 'flowbite-react';
 import { useState } from 'react';
-import { SERVICE_TYPE } from '@/app/types';
+import { createService } from '@/app/actions';
+import { ServiceNode } from '@/app/api/project/[id]/route';
 
-export function Modal({ shouldReload }: { shouldReload: (reload: boolean) => void }) {
+export function Modal({ addService }: { addService: (service: ServiceNode) => void }) {
     const [openModal, setOpenModal] = useState(false);
 
-    const createService = async () => {
-        try {
-            await fetch("/api/service", { method: "POST", body: JSON.stringify({ id: SERVICE_TYPE.REDIS }) });
-            setOpenModal(false)
-            // Since we are not using sockets or a library that communicates with the server for us, 
-            // timeout is the best way to make sure that new service will show up on the services page.
-            // In the future, most likely would need to check new service status (i.e. initialisation).
-            setTimeout(() => {
-                shouldReload(true)
-            }, 5000);
-        } catch (e: any) {
-            console.log(e.message)
-        }
+    const optimisticNode = (): ServiceNode => {
+        return { node: { id: 'newservice', name: 'New Service', projectId: '', status: '', deployments: { edges: [] } } }
     }
 
     return (
         <>
-            <Button onClick={() => setOpenModal(true)}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 a self-center">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-            </Button>
+            <button onClick={() => setOpenModal(true)} className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 m-1 border border-pale-gray bg-gray-800/40'>
+                <div className='mb-3'>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 m-auto block">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </div>
+                <p>Add a Service</p>
+            </button>
             <FlowBiteModal show={openModal} onClose={() => setOpenModal(false)} className='bg-slate-950'>
                 <FlowBiteModal.Header className='bg-slate-600'>What would you like to do?</FlowBiteModal.Header>
                 <FlowBiteModal.Body>
                     <div className="p-4 md:p-5 bg-slate-600">
                         <ul className="space-y-4 mb-4">
-                            <li onClick={() => createService()}>
+                            <li onClick={async () => {
+                                setOpenModal(false)
+                                addService(optimisticNode())
+                                await createService()
+                            }}>
                                 <input type="radio" id="job-1" name="job" value="job-1" className="hidden peer" required />
                                 <label className="inline-flex items-center justify-between w-full p-5 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-500 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-900 hover:bg-gray-100 dark:text-white dark:bg-gray-600 dark:hover:bg-gray-500">
                                     <div className="block">

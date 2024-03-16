@@ -38,13 +38,22 @@ Given the time constrains, I decided not to take any longer to make the applicat
 - Figure out a way to generate types from graphql schemas
 - Make it responsive (improve responsiveness, at the moment layout does not work well on small screens)
 - Components can be broken down further into smaller ones. This can be achieved by splitting large components into smaller components where each one owns its own state allows for better testability and possibility of defining some components as service side rendered since not everything is dynamic in the web app.
-- State handling can be improved. For example, we could fetch all services and deployments on the main page and then can it available on the services page instead of fetching deployments again.
+- ~~State handling can be improved. For example, we could fetch all services and deployments on the main page and then can it available on the services page instead of fetching deployments again.~~ (Done, using server actions now 11th March 2024)
 - Add tests (currently there are none due to time constrains, I'd add unit tests to test various components and then a number of e2e tests to cover the main functionality of the app)
 - Add caching of results with occasional refetch with something like Apollo Client or ReactQuery (I had some issues with Apollo Client caching and didn't want to take too long to figure out the issues)
 - Following up on the previous point, it would be much more beneficial to use Subscriptions instead of polling the endpoint to listen for any updates from the server
-- Better loader (we can use Nextjs native loader functionality)
-- Add better loaders instead of a simple "Loading..." text
+- ~~Better loader (we can use Nextjs native loader functionality)~~ (Done, same as below)
+- ~~Add better loaders instead of a simple "Loading..." text~~ (Done, removed loader, using server actions to update 11th March 2024)
 - Account for "FAILED" deployment status (currently only SUCCESS, REMOVED and INITIALISING are accounted for)
 - Improve status return error status codes (be more intentional and informative about the statuses)
 - API security of course is not the best at the moment and can be improved
 - Error handling at the moment is just a simple `console.log` this can be further improved
+- Handle deployment timeouts and crashes
+
+## Fix
+
+- ~~Deployment status on the services page~~ (Done, fixed 11th March 2024)
+
+## Resources
+
+- https://railway.app/graphiql
